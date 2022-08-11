@@ -13,7 +13,7 @@
 
 ;; 4.
 (define (rectangle-properties rec)
-  (list (*(list-ref rec 0) (list-ref rec 1))))
+  (list( (* first 're second 'rec) ( + (* 2 first 'rec ) (* 2 second 'rec) ))))
 
 ;; 5.
 (define (find-needle ls)
