@@ -12,8 +12,8 @@
 
 ;; 4.
 (define (rectangle-properties rec)
-  (list( (* first 're second 'rec) ( + (* 2 first 'rec ) (* 2 second 'rec) ))))
-
+  (define largo (list-ref rec 0)) (define ancho (list-ref rec 1))
+  (list (* largo ancho) (* 2(+ largo ancho))))
 ;; 5.
 (define (find-needle* ls num)
  (if (null? ls)
