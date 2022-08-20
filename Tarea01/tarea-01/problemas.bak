@@ -1,5 +1,104 @@
 #lang racket
+;;Problema 1
+(define countdown*
+  (lambda (i f)
+    (if(<= i f)
+            (list i)
+            (cons i(countdown* (- i 1) f)))))
 
-;; Escribe aquí tus soluciones
+(define (countdown num)
+  (countdown* num 0)
+  )
+;;Problema 2
 
-(provide (all-defined-out))
+
+;;Problema 3
+(define (insertL*  b c list)
+ (if(eq? (list-ref list c) b)   
+    (delete-at c list)
+    (insertL*  b (+ 1 c) list)
+    )
+  )
+(define(insertL  b list)
+  (insertL*  b 0 list))
+(define (delete-at k lst)
+  (cond ((null? lst)
+         '())
+        ((zero? k)
+         (cdr lst))
+        (else
+         (cons (car lst)
+               (delete-at (sub1 k) (cdr lst))))))
+
+;;Problema 4
+(define (map op list)
+  (if (empty? list)
+    '()
+    (cons (op (first list)) (map op (rest list)))))
+;;Problema 5
+(define (filter op list)
+  (cond ((empty? list) empty)
+        ((op (first list))
+         (cons (first list) (filter op (rest list))))
+        (else (filter op (rest list)))))
+;;Problema 6
+(define (zip list list2)
+  (if (or (null? list) (null? list2))
+      null
+      (cons (cons (first list) (first list2)) (zip (rest list) (rest list2)))))
+;;Problema 7
+(define (List-index-ofv*  b c list)
+ (if(eq? (list-ref list c) b)   
+    c
+    (List-index-ofv*  b (+ 1 c) list)
+    )
+  )
+(define(List-index-ofv b list)
+  (List-index-ofv*  b 0 list))
+;;Problema 8
+(define (append list1 list2)
+  (if (null? list1)
+      list2
+      (cons (car list1) 
+            (append (cdr list1) list2))))
+
+;;Problema 9
+(define (reverse lst)
+ [if (null? lst) null [append (reverse (rest lst))(list [first lst])]])
+
+;;Problema 10
+(define (repeat list num)
+  (if (<= num 1)
+     list
+     (append list (repeat list (- 1 num)))
+      )
+  )
+;;Problema 11
+(define (same-lists* list list2 )
+(if(and (null? list) (null? list2))
+  #t
+  (if(or (null? list) (null? list2))
+     #f
+   (if (equal? (first list) (first list2))
+       (same-lists* (rest list) (rest list2))
+       #f
+     )
+   ))
+  )
+;;Problema 12
+
+;;Problema 13
+(define (binary->natural list)
+  (if (null? list)
+      0 
+      (+ (car list) (* 2 (binary->natural (cdr list))))))
+
+;;Problema 14
+(define (div* a b num)
+  (if (eq? (modulo a b) 0)
+     (if(eq? (* b num) a)
+      num
+     (div* a b (+ 1 num)))
+     #f)
+  )
+;;Problema 15
