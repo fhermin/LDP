@@ -10,17 +10,25 @@
   (countdown* num 0)
   )
 ;;Problema 2
-
+(define (insertL x y ls)
+  (if (empty? ls)
+      null
+      (if(eq? (first ls) x)
+         (cons y (cons x(insertL 'x 'y(rest ls))))
+         (cons(first ls)(insertL 'x 'y(rest ls))))))
 
 ;;Problema 3
-(define (insertL*  b c list)
+(define (remv-1st*  b c list)
+  (if(eq? (length list) c)
+     list
  (if(eq? (list-ref list c) b)   
     (delete-at c list)
-    (insertL*  b (+ 1 c) list)
+    (remv-1st*  b (+ 1 c) list)
     )
-  )
-(define(insertL  b list)
-  (insertL*  b 0 list))
+  ))
+(define(remv-1st  b list)
+  (remv-1st*  b 0 list))
+
 (define (delete-at k lst)
   (cond ((null? lst)
          '())
@@ -53,7 +61,7 @@
     (List-index-ofv*  b (+ 1 c) list)
     )
   )
-(define(List-index-ofv b list)
+(define(list-index-ofv b list)
   (List-index-ofv*  b 0 list))
 ;;Problema 8
 (define (append list1 list2)
@@ -70,7 +78,7 @@
 (define (repeat list num)
   (if (<= num 1)
      list
-     (append list (repeat list (- 1 num)))
+     (append list (repeat list (- num 1)))
       )
   )
 ;;Problema 11
@@ -88,13 +96,13 @@
 ;;Problema 12
 #|
    ((w x) (z))
-   ((w (x . ())) (z . ()))
-   ((w . (x . ())) . (z . ()))
+   ((w (x.())) (z.())
+   ((w.(x.())).(z.()))
 |#
 ;;Problema 13
 (define (binary->natural list)
   (if (null? list)
-      0 
+      0
       (+ (car list) (* 2 (binary->natural (cdr list))))))
 
 ;;Problema 14
@@ -105,6 +113,8 @@
      (div* a b (+ 1 num)))
      #f)
   )
+(define(div a b)
+  (div* a b 0))
 ;;Problema 15
 (define append-map (lambda (pro list)
    (if(null? list)
@@ -151,7 +161,86 @@
                      lst2))
               lst1)))
 
-(cartesian-product '(5 4) '(3 2 1))
 ;;Problema 20
+(define (insertL-fr x y ls)
+  (foldr append(insertL x y ls)      
+  '()))
+
+(define (filter-fr pro lst)
+  (foldr (lambda (x y)
+           (if (pro x)
+               (cons x y)
+               y))
+         '()
+         lst))
+
+(define (map-fr pro lst)      
+     (foldr (lambda (x y)
+              (cons (pro x) y))
+            '()
+              lst))
+
+(define(append-fr ls ls2)
+  (foldr append(append ls ls2)
+         '())
+  )
+
+(define (reverse-fr ls)
+  (foldr append ( reverse ls) '() ))
+
+(define(binary->natural-fr ls)
+  (foldr (lambda (x y)
+           (+ x (* 2 y)))
+         0
+         ls))
+
+(define(append-map-fr pro pro2)
+  (foldr (lambda (x y)
+           (append(pro x)y))
+         '()
+          pro2))
+
+(define (set-difference-fr l l2)
+  (foldr set-difference
+         (set-difference l l2)
+         '()
+         ))
+
+(define (powerset-fr ls)
+  (foldr append
+         (powerset ls)
+         '()
+         ))
+
+;;Problema 21
+(define snowball
+  (letrec
+      ((odd-case
+        (lambda (fix-odd)
+          (lambda (x)
+            (cond
+              ((and (exact-integer? x) (positive? x) (odd? x))
+               (snowball (add1 (* x 3))))
+              (else (fix-odd x))))))
+       (even-case
+        (lambda (fix-even)
+          (lambda (x)
+            (cond
+              ((and (exact-integer? x) (positive? x) (even? x))
+               (snowball (/ x 2)))
+              (else (fix-even x))))))
+       (one-case
+        (lambda (fix-one)
+          (lambda (x)
+            (cond
+              ((zero? (sub1 x)) 1)
+              (else (fix-one x))))))
+       (base
+        (lambda (x)
+          (error 'error "Invalid value ~s~n" x))))
+    (one-case(even-case(odd-case base)))))
 
 
+
+
+(provide (all-defined-out))
