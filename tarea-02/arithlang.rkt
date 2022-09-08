@@ -10,21 +10,23 @@
   [plusS (l : ArithS) (r : ArithS)]
   [multS (l : ArithS) (r : ArithS)]
   [negS (e : ArithS)]
-  [minuS (l : ArithS) (r : ArithS)])
+  [minuS (l : ArithS) (r : ArithS)]
+  )
 
 
 (define (interp [a : ArithC]) : Number
   (type-case ArithC a
-    [(numC n) (n)]
-    [(plusC l r) (+ (interp (plusC-l a)) (interp (plusC-r a)))]
-    [(multC l r) (* (interp (multC-l a)) (interp (multC-r a)))]))
+    [(numC n) n]
+    [(plusC left right) (+ (interp left) (interp right))]
+    [(multC left right) (* (interp left) (interp right))]))
 
-(define (desugar [a : ArithS]) : ArithC
-  (type-case ArithS a
+(define (desugar [as : ArithS]) : ArithC
+  (type-case ArithS as
     [(numS n) (numC n)]
-    [(plusS l r) (plusC (desugar l) (desugar r))]
-    [(minuS l r) (minusC (desugar l) (desugar r))]
-    [(multS l r) (multC (desugar l) (desugar r))]))
+    [(plusS left right) (plusC (desugar left) (desugar right))]
+    [(multS left right) (multC (desugar left) (desugar right))]
+    [(minuS left right) (plusC (desugar left) (multC (numC -1) (desugar right)))]
+    [(negS e) (multC (numC -1) (desugar e))]))
 
 (define (eval [input : S-Exp]) : Number
   (interp (desugar (parse input))))
@@ -39,12 +41,12 @@
          [(not (s-exp-symbol? (first lst))) (error 'parse "operacion aritmetica no es prefix.")]
          [(= (length lst) 2)
           (case (s-exp->symbol (first lst))
-            ['- (minuS (parse (second lst)))])]
+            ['- (negS (parse (second lst)))])]
          [(= (length lst) 3)
           (case (s-exp->symbol (first lst))
             ['+ (plusS (parse (second lst)) (parse (third lst)))]
             ['* (multS (parse (second lst)) (parse (third lst)))]
-            ['- (negS (parse (second lst)) (parse (third lst)))]
+            ['- (minuS (parse (second lst)) (parse (third lst)))]
             [else (error 'parse "no se reconoce el simbolo en la operacion aritmetica.")])]
          [else (error 'parse "operacion aritmetica malformada.")]))]
      [else (error 'parse "expresion aritmetica malformada.")]))

@@ -63,5 +63,6 @@
              (check-equal? (partition "Veneco" 2) '("Ve" "ne" "co"))
              (check-equal? (partition ":)" 3) '(":)")))
              (check-equal? (partition "Venecos" 3) '("Ven" "eco" "s"))
+
   )
 (run-tests pruebas 'verbose)

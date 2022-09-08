@@ -99,7 +99,34 @@ Implementa los procedimientos smallers y largers, son recursivos estructurales.
 Uno debe regresar los elementos que son estríctamente menores al pivote y otro debe regresar los
 elementos que son estríctamente mayores al pivote.
 |#
+(define (smallers ls n)
+  (if (empty? ls)
+      null
+      (if (or (> (first ls) n) (eq? (first ls) n))
+          (smallers (rest ls) n)
+          (cons (first ls) (smallers (rest ls) n)))))
 
+(define (largers ls n)
+  (if (empty? ls)
+      null
+      (if (or (> n (first ls)) (eq? (first ls) n))
+          (largers (rest ls) n)
+          (cons (first ls) (largers (rest ls) n)))))
+#|PROBLEMA 11
+|#
+(define (quicksort ls)
+  (cond
+    [(empty? ls) null]
+    [else
+     (define pivot (first ls))
+       (append (quicksort (smallers ls pivot))
+               (equals ls pivot)
+               (quicksort (largers ls pivot)))]))
 
-
+(define (equals ls n)
+  (if (null? ls)
+      null
+      (if (eq? (first ls) n)
+          (cons n (equals (rest ls) n))
+          (equals (rest ls) n))))
 (provide (all-defined-out))
