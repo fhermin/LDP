@@ -102,16 +102,16 @@ elementos que son estríctamente mayores al pivote.
 (define (smallers ls n)
   (if (empty? ls)
       null
-      (if (or (> (first ls) n) (eq? (first ls) n))
-          (smallers (rest ls) n)
-          (cons (first ls) (smallers (rest ls) n)))))
+      (cond[(> (first ls) n) (smallers (rest ls) n)]
+           [(eq? (first ls) n) (smallers (rest ls) n)]
+          [else (cons (first ls) (smallers (rest ls) n))])))
 
 (define (largers ls n)
   (if (empty? ls)
       null
-      (if (or (> n (first ls)) (eq? (first ls) n))
-          (largers (rest ls) n)
-          (cons (first ls) (largers (rest ls) n)))))
+      (cond [(> n (first ls)) (largers (rest ls) n)]
+            [(eq? (first ls) n) (largers (rest ls) n)]
+          [else (cons (first ls) (largers (rest ls) n))])))
 #|PROBLEMA 11
 |#
 (define (quicksort ls)
@@ -120,13 +120,41 @@ elementos que son estríctamente mayores al pivote.
     [else
      (define pivot (first ls))
        (append (quicksort (smallers ls pivot))
-               (equals ls pivot)
+               (eq ls pivot)
                (quicksort (largers ls pivot)))]))
-
-(define (equals ls n)
+(define (eq ls n)
   (if (null? ls)
       null
-      (if (eq? (first ls) n)
-          (cons n (equals (rest ls) n))
-          (equals (rest ls) n))))
+      (cond
+          [(eq? (first ls) n) (cons n (eq (rest ls) n))]
+          [else (eq (rest ls) n)])))
+
+#|PROBLEMA 12|#
+(define (g-quicksort ls n)
+  (cond
+    [(empty? ls) null]
+    [else
+     (define pivot (first ls))
+       (append (g-quicksort (filter (lambda (x) (n x pivot)) ls) n)
+               (filter (lambda (x) (equal? x pivot)) ls)
+               (g-quicksort (filter (lambda (x) (and (not (n x pivot)) (not (equal? x pivot)))) ls) n))]))
+#|PROBLEMA 13|#
+(define (iquicksort ls)
+  (cond
+    [(empty? ls) null]
+    [(>= 100 (length ls)) (isort ls)]
+    [else
+     (define pivot (first ls))
+       (append (quicksort (smallers ls pivot))
+               (eq ls pivot)
+               (quicksort (largers ls pivot)))]))
+#|PROBLEMA 14|#
+(define (smallers-filter ls n)
+  (filter (lambda (x) (> n x)) ls))
+
+(define (largers-filter ls n)
+  (filter (lambda (x) (> x n)) ls))
+
+
+
 (provide (all-defined-out))

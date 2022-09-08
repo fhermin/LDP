@@ -61,8 +61,31 @@
              (check-equal? (partition "" 3) '())
              (check-equal? (partition "Benito Perez" 0) '())
              (check-equal? (partition "Veneco" 2) '("Ve" "ne" "co"))
-             (check-equal? (partition ":)" 3) '(":)")))
-             (check-equal? (partition "Venecos" 3) '("Ven" "eco" "s"))
-
+             (check-equal? (partition ":)" 3) '(":)"))
+             (check-equal? (partition "Venecos" 3) '("Ven" "eco" "s")))
+  
+ (test-case "smallers-filter"
+             (check-equal? (smallers-filter '(5 5 5 5) 4) '())
+             (check-equal? (smallers-filter '(5 5 5 5) 6) '(5 5 5 5)))
+  
+  (test-case "largers-filter"
+             (check-equal? (largers-filter '(5 5 5 5) 6) '())
+             (check-equal? (largers-filter '(5 5 5 5) 4) '(5 5 5 5)))
+  
+  (test-case "quicksort"
+    (check-equal? (quicksort '(1 2 5 2 3 6 7)) '(1 2 2 3 5 6 7))
+    (check-equal? (quicksort '(1 4 5 8 3 2 9)) '(1 2 3 4 5 8 9))
   )
+
+ (test-case "g-quicksort"
+             (check-equal? (g-quicksort '(2 5 6 4 8 4 5 2 18 4) (lambda (x y) (< x y)))
+                  '(2 2 4 4 4 5 5 6 8 18))
+             (check-equal? (g-quicksort '(2 5 6 4 8 4 5 2 18 4) (lambda (x y) (> x y)))
+                  '(18 8 6 5 5 4 4 4 2 2))
+             (check-equal? (g-quicksort '("aa" "a" "aaa" "aaaa" "aaaaaaaa" "aa") (lambda (x y) (> (string-length x) (string-length y))))
+                  '("aaaaaaaa" "aaaa" "aaa" "aa" "aa" "a"))
+             (check-equal? (g-quicksort '("aa" "a" "aaa" "aaaa" "aaaaaaaa" "aa") (lambda (x y) (< (string-length x) (string-length y))))
+                  '("a" "aa" "aa" "aaa" "aaaa" "aaaaaaaa")))
+)
+  
 (run-tests pruebas 'verbose)
