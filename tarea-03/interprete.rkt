@@ -1,8 +1,26 @@
 #lang plait
 
+#|
+ EVALUADOR NO TOCAR
+|#
 (define (eval [str : S-Exp]) : Value
 (interp (desugar (parse str))))
-
+#|
+ EXPRESIONES DE TIPOS DEL LENGUAJE
+|#
+(define-type Value
+  (numV [value : Number])
+  (strV [value : String])
+  (boolV [value : Boolean])
+  (funV [param : Symbol] [body : ExprC]))
+#|
+ OPERATORS
+|#
+(define-type Operator
+  (plus0)
+  (append0)
+  (numeq0)
+  (streq0))
 
 (define-type ExprS
   (numS [n : Number])
