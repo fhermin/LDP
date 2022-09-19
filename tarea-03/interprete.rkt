@@ -1,7 +1,9 @@
 #lang plait
 
 #|
- EVALUADOR NO TOCAR
+ |||||||||||||||||||||||||||||||||
+ ||||||EVALUADOR NO TOCAR|||||||||
+ |||||||||||||||||||||||||||||||||
 |#
 (define (eval [str : S-Exp]) : Value
 (interp (desugar (parse str))))
@@ -22,19 +24,80 @@
   (numeq0)
   (streq0))
 
+(define-type ExprC
+  (numC [value : Number])
+  (strC [value : String])
+  (boolC [value : Boolean])
+  (idC [name : Symbol])
+  (ifC [a : ExprC] [b : ExprC] [c : ExprC])
+  (binopC [op : Operator] [left : ExprC] [right : ExprC])
+  (funC [param : Symbol] [body : ExprC])
+  (appC [func : ExprC] [arg : ExprC]))
+
 (define-type ExprS
-  (numS [n : Number])
-  (strS [s : String])
-  (boolS [b : Boolean])
+  (numS [value : Number])
+  (strS [value : String])
+  (boolS [value : Boolean])
   (idS [name : Symbol])
-  (pluS [left : ExprS] [right : ExprS]) 
   (ifS [a : ExprS] [b : ExprS] [c : ExprS])
   (andS [left : ExprS] [right : ExprS])
   (orS [left : ExprS] [right : ExprS])
-  (funS [name : Symbol] [body : ExprS])
-  (eqS [left : ExprS] [right : ExprS])
-  (binopS [op : ExprS] [left : ExprS] [right : ExprS])
-  (letS [name : Symbol] [body : ExprS]))
+  (binopS [op : Operator] [left : ExprS] [right : ExprS])
+  (funS [param : Symbol] [body : ExprS])
+  (letS [name : Symbol] [value : ExprS] [body : ExprS])
+  (appS [func : ExprS] [arg : ExprS]))
+;;;;;;;;;;;;;
+;; DESUGAR ;;
+;;;;;;;;;;;;;
+
+(define (desugar [e : ExprS]) : ExprC
+  (type-case ExprS e
+    [(numS value) (numC value)]
+    [(strS value) (strC value)]
+    [(boolS value) (boolC value)]
+    [(idS name) (idC name)]
+    [(ifS a b c) (ifC (desugar a) (desugar b) (desugar c))]
+    [(andS left right) (ifC (desugar left) (boolC #t) (desugar right))]
+    [(orS left right) (ifC (desugar left) (boolC #t) (desugar right))]
+    [(binopS op left right)
+     (binopC op (desugar left) (desugar right))]
+    [(funS param body) (funC param (desugar body))]
+    [(letS name value body) (appC (funC name (desugar body)) (desugar value))]
+    [(appS func arg) (appC (desugar func) (desugar arg))]))
+
+
+;;;;;;;;;;;;
+;; INTERP ;;
+;;;;;;;;;;;;
+
+(define (interp [e : ExprC]) : Value
+  (type-case ExprC e
+    [(numC value) (numV value)]
+    [(strC value) (strV value)]
+    [(boolC value) (boolV value)]
+    [(idC name) (numV 0)]
+    [(ifC a b c) (numV 0)]
+    [(binopC op left right)
+     (let ([left (interp left)])
+       (let ([right (interp right)])
+         (interp-binop op left right)))]
+    [(funC param body) (numV 0)]
+    [(appC func arg) (numV 0)]))
+
+(define (interp-binop [op : Operator]
+                      [left : Value]
+                      [right : Value]) : Value
+  (type-case Operator op
+    [(plusO)
+     (if (numV? left)
+         (if (numV? right)
+             (numV (+ (numV-value left)
+                      (numV-value right)))
+             (error 'binop "upsi dupsi deisy"))
+         (error 'binop "upsi deisy dupsi"))]
+    [(appendO) ....]
+    [(numeqO) ....]
+    [(streqO) ....]))
 #|PARSE|#
 (define (parse [in : S-Exp]) : ExprS
 (cond
