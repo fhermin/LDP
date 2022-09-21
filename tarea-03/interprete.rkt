@@ -65,6 +65,13 @@
   (funS [param : Symbol] [body : ExprS])
   (letS [name : Symbol] [value : ExprS] [body : ExprS])
   (appS [func : ExprS] [arg : ExprS]))
+
+(define (bad-app-error [v : Value])
+  (error 'interp
+         (string-append
+          "identicador no es una función"
+          (to-string v))))
+
 #|
  |||||||||||||||||||||||||||||||||||
  ||||||||||||||DESUGAR||||||||||||||
@@ -117,7 +124,7 @@
      (let ([x (interp-helper func env)])
        (cond
          [(not (funV? x))
-          (error 'interp-helper "no es una función")]
+          ((bad-app-error x))]
          [else (let ([nenv (cons (binding (funV-param x) (interp-helper arg env)) (funV-e x))])
              (interp-helper (funV-body x) nenv))]))]))
 
